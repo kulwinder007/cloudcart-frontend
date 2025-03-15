@@ -20,11 +20,11 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo yum update -y
-          sudo yum install -y docker
+          sudo apt-get update -y
+          sudo apt-get install -y docker.io
 
       - name: Start Docker Service
-        run: sudo service docker start
+        run: sudo systemctl start docker
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
