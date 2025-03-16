@@ -28,10 +28,17 @@ jobs:
           docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.IMAGE_NAME }}:latest
 
       # Stop & remove any existing container
+      #- name: Stop and Remove Existing Container
+      #  run: |
+      #    docker stop ${{ env.CONTAINER_NAME }} || true
+      #    docker rm ${{ env.CONTAINER_NAME }} || true
+
       - name: Stop and Remove Existing Container
         run: |
-          docker stop ${{ env.CONTAINER_NAME }} || true
-          docker rm ${{ env.CONTAINER_NAME }} || true
+          docker stop ${{ env.CONTAINER_NAME }} 2> $null || echo "No container to stop"
+          docker rm ${{ env.CONTAINER_NAME }} 2> $null || echo "No container to remove"
+        shell: powershell
+        
 
       # Run the new container
       - name: Run Docker Container
