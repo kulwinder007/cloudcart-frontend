@@ -31,8 +31,5 @@ COPY --from=build /app/build /usr/share/nginx/html
 # Expose port 80 (since Nginx is listening on port 80)
 EXPOSE 80
 
-# Restart Nginx service
-RUN nginx -s reload
-
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
