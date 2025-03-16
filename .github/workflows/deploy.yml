@@ -33,14 +33,6 @@ jobs:
       #    docker stop ${{ env.CONTAINER_NAME }} || true
       #    docker rm ${{ env.CONTAINER_NAME }} || true
 
-      - name: Stop and Remove Existing Container
-        run: |
-          $ErrorActionPreference = "SilentlyContinue"
-          docker stop ${{ env.CONTAINER_NAME }}
-          docker rm ${{ env.CONTAINER_NAME }}
-        shell: powershell
-    
-
       # Run the new container
       - name: Run Docker Container
         run: |
