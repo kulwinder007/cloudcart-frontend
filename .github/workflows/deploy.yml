@@ -1,22 +1,18 @@
-name: Build and Deploy
+name: Build and Deploy Locally
 
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
-  pull_request:
-    branches:
-      - main  # Trigger on PR to the main branch
+      - main  # Runs when you push to main branch
 
 env:
-  AWS_REGION: us-east-2  # Set the AWS Region for your ECR repository
-  ECR_REPO: cloudcart-frontend  # Specify the ECR repository name
-  IMAGE_TAG: latest  # Specify the tag for the Docker image
+  IMAGE_NAME: cloudcart-frontend
+  CONTAINER_NAME: cloudcart-frontend-container
+  LOCAL_PORT: 3000  # Adjust as needed
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest  # Using ubuntu-latest for compatibility
-    environment: AWS-ECR
+  build-and-deploy:
+    runs-on: self-hosted  # Use your local self-hosted runner
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -25,41 +21,23 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Cache Docker layers to speed up build times
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      # Configure AWS Credentials
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      # Log in to Amazon ECR
-      - name: Log in to Amazon ECR
-        run: |
-          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-
-      # Build Docker image for frontend
+      # Build Docker image
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/cloudcart-frontend:${{ github.sha }} .
+          docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.IMAGE_NAME }}:latest
 
-      # Tag Docker image
-      - name: Tag Docker Image
+      # Stop & remove any existing container
+      - name: Stop and Remove Existing Container
         run: |
-          docker tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/cloudcart-frontend:${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/cloudcart-frontend:latest
+          docker stop ${{ env.CONTAINER_NAME }} || true
+          docker rm ${{ env.CONTAINER_NAME }} || true
 
-
-      # Push Docker image to ECR
-      - name: Build and Push Docker Image
+      # Run the new container
+      - name: Run Docker Container
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/cloudcart-frontend:${{ github.sha }}
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/cloudcart-frontend:latest
+          docker run -d -p ${{ env.LOCAL_PORT }}:3000 --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }}:latest
+
+      # Verify the container is running
+      - name: Check Running Containers
+        run: docker ps -a
