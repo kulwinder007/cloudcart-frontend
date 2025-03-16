@@ -38,6 +38,6 @@ jobs:
         run: |
           docker run -d -p ${{ env.LOCAL_PORT }}:3000 --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }}:latest
 
-      # Verify the container is running
+      # Verify the container is running..
       - name: Check Running Containers
         run: docker ps -a
