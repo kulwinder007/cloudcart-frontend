@@ -28,7 +28,7 @@ RUN chmod 644 /etc/nginx/nginx.conf
 # Copy the build folder from the previous stage to the Nginx HTML folder
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose port 80 (since Nginx is listening on port 80)
+# Expose port 80 (since Nginx listening on port 80)
 EXPOSE 80
 
 # Start Nginx server
