@@ -3,7 +3,7 @@ name: Build and Deploy Locally
 on:
   push:
     branches:
-      - main  # Runs when you push to main branch
+      - main  # Runs when you push to main branch1
 
 env:
   IMAGE_NAME: cloudcart-frontend
