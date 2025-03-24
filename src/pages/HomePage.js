@@ -107,7 +107,7 @@ const HomePage = () => {
     }
   };
   return (
-    <Layout title={"Cloudcart - Best offers "}>
+    <Layout title={"Cloudcart - Best offers"}>
       {/* banner image */}
       <img
         src="/images/banner.png"
