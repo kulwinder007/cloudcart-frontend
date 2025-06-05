@@ -1,4 +1,4 @@
-Capstone project for Cloud Computing program
+CloudCart - a fullstack e-commerce based web application hosted in AWS, as a Capstone project for Cloud Computing program.
 
 # cloudcart-frontend - This repository contains the frontend files of the cloudcart website.
 There is another repository - cloudcart-backend available at https://github.com/kulwinder007/cloudcart-backend that contains the backend files of the cloudcart website.
